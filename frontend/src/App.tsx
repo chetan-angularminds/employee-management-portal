@@ -1,12 +1,16 @@
 import './App.css'
-import { Button } from "@material-tailwind/react";
+import NavbarDemo from './components/navbar/navbar';
+import Router from './router';
 
 function App() {
 
 
   return (
     <>
-       <Button>Button</Button>
+      <NavbarDemo/>
+      <main className='pt-6 w-[100%]'>
+        <Router/>
+      </main>
     </>
   )
 }
