@@ -102,7 +102,7 @@ function NavList() {
   return (
     <>
       {LINKS.map(({ icon: Icon, title, href }) => (
-        <List.Item key={title} as="a" href={href} className="dark:text-slate-400 dark:hover:bg-slate-600 focus:dark:bg-slate-600">
+        <List.Item key={title} as="a" href={href} className="dark:text-purple-300 dark:hover:bg-purple-700 focus:dark:bg-purple-700">
           <List.ItemStart className="mr-1.5">
             <Icon className="h-4 w-4" />
           </List.ItemStart>
@@ -124,13 +124,13 @@ function ProfileMenu() {
         className="border border-primary p-0.5 lg:ml-auto "
       />
       <Menu.Content className="dark:bg-slate-800 ">
-        <Menu.Item className="dark:text-slate-300 dark:hover:bg-slate-600">
+        <Menu.Item className="dark:text-slate-300 dark:hover:bg-purple-700">
           <UserCircle className="mr-2 h-[18px] w-[18px] " /> My Profile
         </Menu.Item>
-        <Menu.Item className="dark:text-slate-300 dark:hover:bg-slate-600">
+        <Menu.Item className="dark:text-slate-300 dark:hover:bg-purple-700">
           <Settings className="mr-2 h-[18px] w-[18px]" /> Edit Profile
         </Menu.Item >
-        <Menu.Item className="dark:text-slate-300 dark:hover:bg-slate-600">
+        <Menu.Item className="dark:text-slate-300 dark:hover:bg-purple-700">
           <HeadsetHelp className="mr-2 h-[18px] w-[18px]" /> Support
         </Menu.Item>
         <hr className="!my-1 -mx-1 border-secondary-dark" />
@@ -152,10 +152,10 @@ const MenuItem = React.forwardRef<
   }
 >(({ title, description, icon: Icon, ...rest }, ref:any) => {
   return (
-    <List.Item ref={ref} as="a" href="#" className="p-1.5 dark:text-white dark:bg-slate-600 dark:hover:bg-slate-400" {...rest}>
+    <List.Item ref={ref} as="a" href="#" className="p-1.5 dark:text-white dark:bg-purple-700 dark:hover:bg-purple-500" {...rest}>
       {Icon && (
         <List.ItemStart>
-          <div className="flex items-center justify-center rounded-[5px] bg-surface-light p-2 dark:bg-slate-500">
+          <div className="flex items-center justify-center rounded-[5px] bg-surface-light p-2 dark:bg-purple-800">
             <Icon className="h-6 w-6 text-black dark:text-white" />
           </div>
         </List.ItemStart>
@@ -204,7 +204,7 @@ export default function NavbarWithMegaMenu() {
           <List className="mt-4 flex flex-col gap-1 lg:mt-0 lg:flex-row lg:items-center ">
             <Tooltip placement="bottom" interactive>
               <Tooltip.Trigger>
-                <List.Item className="dark:text-slate-400 dark:hover:bg-slate-600 focus:dark:bg-slate-600">
+                <List.Item className="dark:text-purple-300 dark:hover:bg-purple-700 focus:dark:bg-purple-700">
                   <List.ItemStart className="me-1.5">
                     <MultiplePages className="h-4 w-4" />
                   </List.ItemStart>
@@ -214,7 +214,7 @@ export default function NavbarWithMegaMenu() {
                   </List.ItemEnd>
                 </List.Item>
               </Tooltip.Trigger>
-              <Tooltip.Content className="z-[100000] grid max-w-screen-xl rounded-lg border border-surface bg-background p-2 shadow-xl shadow-surface/10 dark:border-surface dark:bg-slate-600">
+              <Tooltip.Content className="z-[100000] grid max-w-screen-xl rounded-lg border border-purple-300 bg-background p-2 shadow-xl shadow-surface/10 dark:border-purple-500 dark:bg-purple-700">
                 <ul className="grid grid-cols-3 gap-y-2">{renderItems}</ul>
                 <Tooltip.Arrow />
               </Tooltip.Content>

@@ -1,4 +1,5 @@
-import { Credentials } from "../interfaces/auth.interfaces";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Credentials, SignInResponse } from "../interfaces/auth.interfaces";
 import api from "./api.service";
 
 export default class AuthService {
@@ -22,10 +23,10 @@ export default class AuthService {
       });
   }
 
-  async register(userDetails: Credentials) {
-    api
+  async register(userDetails: Credentials): Promise<SignInResponse>{
+    return api
       .post("auth/login", userDetails)
-      .then((response) => {
+      .then((response:any) => {
         if (response.data.data.token) {
           localStorage.setItem("token", response.data.data.token);
         }

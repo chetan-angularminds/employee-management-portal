@@ -1,5 +1,5 @@
 import './App.css'
-import NavbarDemo from './components/navbar/navbar';
+import Navbar from './components/navbar/navbar';
 import Router from './router';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-      <NavbarDemo/>
+      <Navbar/>
       <main className='pt-6 w-[100%]'>
         <Router/>
       </main>

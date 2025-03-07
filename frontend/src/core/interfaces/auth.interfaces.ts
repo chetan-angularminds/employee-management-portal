@@ -4,3 +4,15 @@ export interface Credentials{
     password: string;
 } 
 
+export interface SignInResponse {
+  statusCode: number;
+  data: Data;
+  message: string;
+  success: boolean;
+  redirect: null;
+}
+
+export interface Data {
+  token: string;
+  expiryTime: string;
+}
