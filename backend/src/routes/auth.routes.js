@@ -2,6 +2,7 @@ import express from "express";
 import controllers from "../controllers/index.js";
 import validations from "../validations/index.js";
 import validate from "../middlewares/validate.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -16,5 +17,13 @@ router.post(
     validate(validations.authValidations.login),
     controllers.authController.login
 );
+
+router.use(authMiddleware);
+// Change password endpoint
+router.post("/change-password", controllers.authController.changePassword);
+
+router.get("/verify-user", controllers.authController.verifyUser);
+
+router.get("/verify-admin", controllers.authController.isAdmin);
 const authRouter = router;
 export default authRouter;

@@ -10,7 +10,6 @@ import config from "../config/env.config.js";
 import middlewares from "../middlewares/index.js";
 import moment from "moment";
 
-
 const fullNameSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -60,7 +59,9 @@ const userSchema = new mongoose.Schema(
             index: true,
             trim: true,
             validate(value) {
-                if (!validator.isEmail(value, { allow_utf8_local_part: false })) {
+                if (
+                    !validator.isEmail(value, { allow_utf8_local_part: false })
+                ) {
                     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Email");
                 }
             },
@@ -84,14 +85,14 @@ const userSchema = new mongoose.Schema(
             ref: "Organisation",
             index: true,
             trim: true,
-            required: false
+            required: false,
         },
         password: {
             type: String,
             required: false,
             trim: true,
             minlength: 8,
-            private: true
+            private: true,
         },
         role: {
             type: String,
@@ -115,6 +116,7 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        registrationToken: { type: String },
     },
     {
         timestamps: true,
@@ -124,7 +126,6 @@ const userSchema = new mongoose.Schema(
 userSchema.plugin(plugins.softDelete);
 userSchema.plugin(plugins.paginate);
 userSchema.plugin(plugins.privatePlugin);
-
 
 /**
  * Check if email is taken
@@ -150,17 +151,16 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
  */
 userSchema.statics.isUserNameTaken = async function (userName, excludeUserId) {
     console.log(userName);
-    
+
     const user = await this.findOne({
         userName,
         _id: { $ne: excludeUserId },
         deleted: { $ne: true },
     });
     console.log(user);
-    
+
     return !!user;
 };
-
 
 /**
  * Check if Password is correct
@@ -171,13 +171,12 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 
-
 /**
  * Generate Access token
  * @returns {string} - the generated access token
  */
 userSchema.methods.generateAccessToken = function () {
-    const expiryTime = moment().add(config.jwt.expiry, 'seconds').toISOString();
+    const expiryTime = moment().add(config.jwt.expiry, "seconds").toISOString();
     const token = jwt.sign(
         {
             id: this._id,
@@ -190,6 +189,25 @@ userSchema.methods.generateAccessToken = function () {
     );
     return { token, expiryTime };
 };
+
+// userSchema.methods.generateRegistrationToken =
+
+userSchema.pre("save", function (next) {
+    if (!this.isNew) {
+        next();
+    }
+    const token = jwt.sign(
+        {
+            id: this._id,
+            userName: this.userName,
+            email: this.email,
+            fullName: this.fullName,
+        },
+        config.jwt.secret
+    );
+    this.registrationToken = token;
+    next();
+});
 
 userSchema.pre("save", function (next) {
     if (!this.isModified("password")) return next();

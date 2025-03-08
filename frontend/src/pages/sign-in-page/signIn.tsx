@@ -4,30 +4,46 @@ import {
   Button,
   Input,
   Checkbox,
+  Spinner,
 } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
-import { Credentials, SignInResponse } from "../../core/interfaces/auth.interfaces";
-import AuthService from "../../core/services/auth.service";
+import {
+  Credentials,
+  SignInResponse,
+} from "../../core/interfaces/auth.interfaces";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getToast } from "../../core/services/toasts.service";
+import authService from "../../core/services/auth.service";
 
 export default function SignIn() {
-  const authSevice = new AuthService();
+  const Navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   const [isLoading, setisLoading] = useState<boolean>(false);
 
   const handleSingIn = async (data: Credentials) => {
     setisLoading(true);
-    authSevice.login(data).then((res:SignInResponse) => {
-      if(res){
-        console.log(res);
-        
+    const response: SignInResponse = await authService.login(data);
+    setTimeout(() => {
+      if (response.success) {
+        getToast("success", response.message);
+        Navigate("/");
+      } else {
+        getToast("error", response.message);
       }
-    });
+
+      setisLoading(false);
+    }, 5000);
   };
 
   return (
@@ -99,11 +115,14 @@ export default function SignIn() {
             </Typography>
           </label>
           <Button
-            onClick={handleSubmit((data) => console.log(data))}
+            onClick={handleSubmit((data) => {
+              console.log(data);
+              handleSingIn(data);
+            })}
             isFullWidth
             className="bg-blue-500 border-none hover:bg-blue-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white"
           >
-            Sign In
+            Sign In &nbsp;{isLoading && <Spinner size="sm" />}
           </Button>
         </Card.Body>
         <Card.Footer className="text-center p-4">
