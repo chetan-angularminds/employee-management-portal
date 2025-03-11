@@ -44,8 +44,11 @@ class ThemeService {
     document.documentElement.classList.remove("dark");
   }
   handleSystemThemeChange = (event: MediaQueryListEvent) => {
+    console.log(this.theme,"\n",event );
+    
     if (this.theme === "system") {
         if (event.matches) {
+            console.log(event);
             
             this.applyDarkMode();
           } else {
@@ -60,7 +63,7 @@ class ThemeService {
     } else if (theme === "system") {
       const isSystemDarkTheme = window.matchMedia(
         "(prefers-color-scheme: dark)"
-      );
+      ).matches;
       if (isSystemDarkTheme) {
         this.applyDarkMode();
       } else {

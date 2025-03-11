@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.country-list {
+  @apply dark:bg-slate-900 !important;
+  @apply dark:text-white;
+  @apply rounded-md;
+  @apply text-xs;
+}
+
+li.country:hover {
+  @apply bg-purple-700 !important;
+  @apply text-white !important;
+  @apply dark:bg-slate-600 !important;
+}

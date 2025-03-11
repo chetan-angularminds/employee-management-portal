@@ -7,7 +7,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@material-tailwind/react/**/*.{js,ts,jsx,tsx}"
   ],
-  darkMode: "media" ,
+  darkMode: "class" ,
   theme: {
     extend: {},
   },

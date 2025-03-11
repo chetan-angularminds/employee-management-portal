@@ -1,36 +1,50 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BehaviorSubject } from "rxjs";
-import { Credentials, SignInResponse } from "../interfaces/auth.interfaces";
+import { Credentials, IsUserAuthenticatedResponse, SignInResponse, SignUpResponse } from "../interfaces/auth.interfaces";
 import api from "./api.service";
 import { getToast } from "./toasts.service";
+import { ApiError } from "../interfaces/apiError.interface";
+import { useNavigate } from "react-router-dom";
 
 
 class AuthService {
-  isLoading: boolean = false;
-  private isUserAuthenticated: BehaviorSubject<boolean> =
+
+  
+
+  private isUserAuthenticatedSubject: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
   get isUserAuthenticated$() {
-    return this.isUserAuthenticated.asObservable();
+    return this.isUserAuthenticatedSubject.asObservable();
   }
   setisUserAuthenticated(value: boolean) {
-    this.isUserAuthenticated.next(value);
+    this.isUserAuthenticatedSubject.next(value);
+  }
+  private isLoadingSubject: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
+  get isLoading$() {
+    return this.isLoadingSubject.asObservable();
+  }
+  setisLoading(value: boolean) {
+    this.isLoadingSubject.next(value);
   }
   constructor() {
     this.isAuthenticated();
   }
-
+  tokenSaver(data:any){
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      this.setisUserAuthenticated(true);
+    }
+    if (data.expiryTime) {
+      localStorage.setItem("token-expiry", data.expiryTime);
+    }
+  }
   async login(credentials: Credentials): Promise<SignInResponse> {
     return api
       .post("auth/login", credentials)
       .then((response) => {
-        if (response.data.data.token) {
-          localStorage.setItem("token", response.data.data.token);
-          this.setisUserAuthenticated(true);
-        }
-        if (response.data.data.expiryTime) {
-          localStorage.setItem("token-expiry", response.data.data.expiryTime);
-        }
+        this.tokenSaver(response.data.data)
         return response.data;
       })
       .catch((err) => {
@@ -40,10 +54,11 @@ class AuthService {
       });
   }
 
-  async register(userDetails: Credentials): Promise<SignInResponse> {
+  async register(userDetails: Credentials): Promise<SignUpResponse> {
     return api
       .post("auth/register", userDetails)
       .then((response: any) => {
+        this.tokenSaver(response.data.data)
         return response.data;
       })
       .catch((err) => {
@@ -61,9 +76,9 @@ class AuthService {
     this.setisUserAuthenticated(false);
   }
   async isAuthenticated(): Promise<boolean> {
-    this.isLoading = true;
+    this.setisLoading(true)
     if (!this.getAccessToken()) {
-      this.isLoading = false;
+      this.setisLoading(false)
       return false;
     }
     const result = await api
@@ -80,12 +95,13 @@ class AuthService {
       })
       .catch((_err) => {
         getToast("error", _err?.response?.data?.message || "failed to fetch");
+        this.logout()
         this.setisUserAuthenticated(false);
         return false;
       });
       
       
-    this.isLoading = false;
+      this.setisLoading(false)
     return result;
   }
 
@@ -107,7 +123,7 @@ class AuthService {
 
   async createOrganization(organizationDetails: any): Promise<any> {
     return api
-      .post("organization/create", organizationDetails, {
+      .post("/auth/organization", organizationDetails, {
         headers: {
           Authorization: `Bearer ${this.getAccessToken()}`,
         },
@@ -121,19 +137,23 @@ class AuthService {
       });
   }
 
-  async checkIdValidity(id: string): Promise<boolean> {
+  async checkIdValidity(id: string): Promise<IsUserAuthenticatedResponse> {
     return api
-      .get(`organization/check-id/${id}`, {
+      .get(`/auth/check-id/${id}`, {
         headers: {
           Authorization: `Bearer ${this.getAccessToken()}`,
         },
       })
       .then((response: any) => {
-        return response.data.isValid;
+        return response.data;
       })
-      .catch((err) => {
+      .catch((err:ApiError) => {
         console.log(err);
-        return false;
+        if (err.response.data.redirect) {
+          console.log("hello");
+          
+        }
+        return err.response.data;
       });
   }
 }

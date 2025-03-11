@@ -1,5 +1,4 @@
 import { JSX, useEffect, useState } from "react";
-import { getToast } from "../services/toasts.service";
 import authService from "../services/auth.service";
 
 function FallbackAuthGuard({
@@ -14,27 +13,18 @@ function FallbackAuthGuard({
   );
 
   useEffect(() => {
-    if (result) {
-      authService
-        .isAuthenticated()
-        .then((response) => {
-          setResult(response);
-        })
-        .catch((_err) => {
-          setResult(false);
-          getToast("error", _err.message);
-        });
-    }
-
-    authService.isUserAuthenticated$.subscribe((value: boolean) => {
+    const subscription = authService.isUserAuthenticated$.subscribe((value: boolean) => {
       setResult(value);
     });
-  }, []);
 
-  if (!result) {
-    authService.logout();
-  }
-  return result ? children : fallbackChildren;
+    return () => subscription.unsubscribe();
+  }, [result]);
+
+  return (<>
+    {result && children}
+    {!result && fallbackChildren}
+    </>
+  );
 }
 
 export default FallbackAuthGuard;

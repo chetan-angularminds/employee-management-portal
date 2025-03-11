@@ -1,4 +1,4 @@
-
+import Organisation from "../models/organisation.model.js";
 import services from "../services/index.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
@@ -6,11 +6,11 @@ import asyncHandler from "../utils/asyncHandler.js";
 import httpStatus from "http-status";
 
 const register = asyncHandler(async (req, res) => {
-    const user = await services.userService.createUser(req.body);
-    user.save();
+    const user = await services.authService.registerUser(req.body);
+    const authTokens = await user.generateAccessToken();
     const response = new ApiResponse(
         httpStatus.CREATED,
-        { user, token: user.registrationToken },
+        { user, ...authTokens },
         "user created successfully"
     );
     res.status(httpStatus.CREATED).json(response);
@@ -33,18 +33,11 @@ const login = asyncHandler(async (req, res) => {
 const changePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user._id;
-    const user = await User.findById(userId);
-
-    if (!user) {
-        throw new ApiError(404, "User not found");
-    }
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
-    if (!isPasswordCorrect) {
-        throw new ApiError(401, "Old password is incorrect");
-    }
-
-    user.password = newPassword;
-    await user.save();
+    await services.authService.changeUserPassword(
+        oldPassword,
+        newPassword,
+        userId
+    );
 
     const response = new ApiResponse(
         200,
@@ -66,6 +59,44 @@ const isAdmin = asyncHandler(async (req, res) => {
     const response = new ApiResponse(200, null, "user is admin");
     res.status(200).json(response);
 });
-const authController = { register, login, changePassword, isAdmin, verifyUser };
+
+const verifyRegistrationToken = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    const { registrationToken } = req.user;
+
+    if (req.user.organisation)
+        throw new ApiError(401, "Already registered please login", "/");
+
+    if (token == registrationToken) {
+        throw new ApiError(401, "Invalid registration token");
+    }
+
+    const response = new ApiResponse(200, true, "Registration token is valid");
+    res.status(200).json(response);
+});
+
+const registerOrg = asyncHandler(async (req, res) => {
+    console.log(req.body);
+    const organisation = await services.authService.registerOrganisation(
+        req.body,
+        req.user
+    );
+    const response = new ApiResponse(
+        200,
+        { organisation },
+        "Organisation registered successfully"
+    );
+    res.status(200).json(response);
+});
+
+const authController = {
+    register,
+    login,
+    changePassword,
+    isAdmin,
+    verifyUser,
+    verifyRegistrationToken,
+    registerOrg,
+};
 
 export default authController;

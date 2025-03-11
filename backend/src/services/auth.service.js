@@ -2,6 +2,7 @@ import constants from "../constants/index.js";
 import models from "../models/index.js";
 import ApiError from "../utils/ApiError.js";
 import httpStatus from "http-status";
+import services from "./index.js";
 
 const loginWithEmailAndPassword = async (credentials) => {
     if (!credentials.userName && !credentials.email) {
@@ -32,7 +33,42 @@ const loginWithEmailAndPassword = async (credentials) => {
 
     return token;
 };
+const registerUser = async (userDetails) => {
+    const user = await services.userService.createUser(userDetails);
+    user.save();
+    return user
+};
 
-const authService = { loginWithEmailAndPassword };
+const registerOrganisation = async (orgDetails, user) => {
+    const organisation = await services.organisationService.createOrgnisation(
+        orgDetails,
+        user
+    );
+    user.organisation = organisation._id;
+    await user.save();
+    return organisation;
+};
+
+const changeUserPassword = async (oldPassword, newPassword,userId)=>{
+    const user = await models.User.findById(userId);
+    
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+        if (!isPasswordCorrect) {
+            throw new ApiError(401, "Old password is incorrect");
+        }
+    
+        user.password = newPassword;
+        await user.save();
+}
+
+const authService = {
+    loginWithEmailAndPassword,
+    registerOrganisation,
+    registerUser,
+    changeUserPassword
+};
 
 export default authService;

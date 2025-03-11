@@ -24,6 +24,7 @@ export default function NavbarWithMegaMenu() {
   const Navigate = useNavigate();
   const [openNav, setOpenNav] = React.useState(false);
   const [isAuthenticated, setIsAuthenticated] = React.useState(true);
+  const [isLoading, setisLoading] = React.useState(false)
   React.useEffect(() => {
     console.log("heloo")
     window.addEventListener(
@@ -32,6 +33,9 @@ export default function NavbarWithMegaMenu() {
     );
     authService.isUserAuthenticated$.subscribe((value: boolean) => {
       setIsAuthenticated(value);
+    });
+    authService.isLoading$.subscribe((value: boolean) => {
+      setisLoading(value);
     });
     authService.isAuthenticated().then((res)=>{
       console.log(res);
@@ -87,7 +91,7 @@ export default function NavbarWithMegaMenu() {
           )}
         </IconButton>
 
-        {!authService.isLoading ? isAuthenticated  ? (
+        {!isLoading ? isAuthenticated  ? (
           <ProfileMenu />
         ) : (
           <Button
@@ -106,7 +110,7 @@ export default function NavbarWithMegaMenu() {
           {renderItems}
         </ul>
         <NavList />
-        <Button
+        {!isLoading && !isAuthenticated && <Button
           isFullWidth
           size="sm"
           className="mt-4"
@@ -116,7 +120,7 @@ export default function NavbarWithMegaMenu() {
           }}
         >
           Sign In
-        </Button>
+        </Button>}
       </Collapse>
     </Navbar>
   );

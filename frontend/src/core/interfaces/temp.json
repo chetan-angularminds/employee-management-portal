@@ -1,0 +1,72 @@
+{
+  "code": "ERR_BAD_REQUEST",
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "adapter": ["xhr", "http", "fetch"],
+    "transformRequest": [null],
+    "transformResponse": [null],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {},
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOCIsInVzZXJOYW1lIjoiY2hldGFuLW5nbSIsImVtYWlsIjoiY2hldGFuQG5nbS5jb20iLCJmdWxsTmFtZSI6eyJmaXJzdE5hbWUiOiJDaGV0YW4iLCJsYXN0TmFtZSI6Ik1vaGl0ZSIsIl9pZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOSJ9LCJpYXQiOjE3NDE2MTIwNDYsImV4cCI6MTc0MTc4NDg0Nn0.hlvTA5Y4pL4Q3snFYsj-3OICaVpTh9y6ft2QBvGdnpE"
+    },
+    "baseURL": "http://192.168.0.39:3200/api",
+    "method": "get",
+    "url": "/auth/check-id/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOCIsInVzZXJOYW1lIjoiY2hldGFuLW5nbSIsImVtYWlsIjoiY2hldGFuQG5nbS5jb20iLCJmdWxsTmFtZSI6eyJmaXJzdE5hbWUiOiJDaGV0YW4iLCJsYXN0TmFtZSI6Ik1vaGl0ZSIsIl9pZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOSJ9LCJpYXQiOjE3NDE2MTIwNDZ9.rKYwYe-uecu8MvwVGwBkdkqa_asVK7i8tL_6sxEkZMI",
+    "allowAbsoluteUrls": true
+  },
+  "message": "Request failed with status code 401",
+  "name": "AxiosError",
+  "request": {},
+  "response": {
+    "data": {
+      "statusCode": 401,
+      "data": null,
+      "message": "Invalid registration token",
+      "success": false,
+      "redirect": null
+    },
+    "status": 401,
+    "statusText": "Unauthorized",
+    "headers": {
+      "content-length": "101",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "config": {
+      "transitional": {
+        "silentJSONParsing": true,
+        "forcedJSONParsing": true,
+        "clarifyTimeoutError": false
+      },
+      "adapter": ["xhr", "http", "fetch"],
+      "transformRequest": [null],
+      "transformResponse": [null],
+      "timeout": 0,
+      "xsrfCookieName": "XSRF-TOKEN",
+      "xsrfHeaderName": "X-XSRF-TOKEN",
+      "maxContentLength": -1,
+      "maxBodyLength": -1,
+      "env": {},
+      "headers": {
+        "Accept": "application/json, text/plain, */*",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOCIsInVzZXJOYW1lIjoiY2hldGFuLW5nbSIsImVtYWlsIjoiY2hldGFuQG5nbS5jb20iLCJmdWxsTmFtZSI6eyJmaXJzdE5hbWUiOiJDaGV0YW4iLCJsYXN0TmFtZSI6Ik1vaGl0ZSIsIl9pZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOSJ9LCJpYXQiOjE3NDE2MTIwNDYsImV4cCI6MTc0MTc4NDg0Nn0.hlvTA5Y4pL4Q3snFYsj-3OICaVpTh9y6ft2QBvGdnpE"
+      },
+      "baseURL": "http://192.168.0.39:3200/api",
+      "method": "get",
+      "url": "/auth/check-id/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOCIsInVzZXJOYW1lIjoiY2hldGFuLW5nbSIsImVtYWlsIjoiY2hldGFuQG5nbS5jb20iLCJmdWxsTmFtZSI6eyJmaXJzdE5hbWUiOiJDaGV0YW4iLCJsYXN0TmFtZSI6Ik1vaGl0ZSIsIl9pZCI6IjY3Y2VlNDBlMDY5MDg0ZDhjY2M4ZTdlOSJ9LCJpYXQiOjE3NDE2MTIwNDZ9.rKYwYe-uecu8MvwVGwBkdkqa_asVK7i8tL_6sxEkZMI",
+      "allowAbsoluteUrls": true
+    },
+    "request": {}
+  },
+  "status": 401,
+  "stack": "AxiosError: Request failed with status "
+}

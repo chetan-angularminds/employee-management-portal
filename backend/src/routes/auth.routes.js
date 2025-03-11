@@ -21,9 +21,10 @@ router.post(
 router.use(authMiddleware);
 // Change password endpoint
 router.post("/change-password", controllers.authController.changePassword);
-
+router.post("/organization", controllers.authController.registerOrg);
 router.get("/verify-user", controllers.authController.verifyUser);
 
 router.get("/verify-admin", controllers.authController.isAdmin);
+router.get("/check-id/:token", controllers.authController.verifyRegistrationToken);
 const authRouter = router;
 export default authRouter;

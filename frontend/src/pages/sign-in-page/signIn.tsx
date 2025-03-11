@@ -43,12 +43,12 @@ export default function SignIn() {
       }
 
       setisLoading(false);
-    }, 5000);
+    }, 1000);
   };
 
   return (
     <div className="w-full h-fit flex justify-center items-center">
-      <Card className="max-w-xs bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 shadow-lg rounded-lg">
+      <Card className="max-w-xs bg-white border border-gray-200 dark:bg-slate-950 dark:border-gray-700 shadow-lg rounded-lg">
         <Card.Header
           as={Card}
           className="flex items-center justify-center p-4 bg-transparent border-none"
@@ -134,7 +134,9 @@ export default function SignIn() {
             <Typography
               type="small"
               as="a"
-              href="#"
+              onClick={() => {
+                Navigate("/auth/sign-up");
+              }}
               className="font-bold text-blue-500 dark:text-purple-400 hover:underline"
             >
               Sign up
