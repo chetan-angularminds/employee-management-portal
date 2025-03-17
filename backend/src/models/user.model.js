@@ -25,10 +25,6 @@ const fullNameSchema = new mongoose.Schema({
     },
 });
 
-const avatarSchema = new mongoose.Schema({
-    publicId: { type: String, required: [true, "publicId is required"] },
-    url: { type: String, required: [true, "URL is required"] },
-});
 
 const contactNumberSchema = new mongoose.Schema({
     countryCode: { type: String },
@@ -103,10 +99,6 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        avatar: {
-            type: avatarSchema,
-            required: false,
-        },
         status: {
             type: String,
             enum: Object.values(constants.UserStatus),
@@ -116,7 +108,15 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        registrationToken: { type: String },
+        profile: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "EmployeeProfile",
+            required: false,
+        },
+        registrationToken: { type: String, required : false },
+        lastLogin: { type: Date },
+        lastLoginIp: { type: String },
+
     },
     {
         timestamps: true,
@@ -172,8 +172,8 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 /**
- * Generate Access token
- * @returns {string} - the generated access token
+ * Generate access token
+ * @returns {Object} - The generated access token and its expiry time
  */
 userSchema.methods.generateAccessToken = function () {
     const expiryTime = moment().add(config.jwt.expiry, "seconds").toISOString();

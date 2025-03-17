@@ -101,7 +101,9 @@ class AuthService {
       });
       
       
-      this.setisLoading(false)
+      setTimeout(()=>{
+        this.setisLoading(false)
+      },2000)
     return result;
   }
 

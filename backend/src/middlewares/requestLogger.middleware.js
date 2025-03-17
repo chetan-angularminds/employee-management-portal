@@ -52,6 +52,7 @@ const requestLoggerMiddleware = async (req, res, next) => {
     // Call the original res.send
     return originalSend.apply(this, arguments);
   };
+  req.ipDetails = getIpDetails(req);
 
   // Capture errors during the response process
   res.on('finish', async () => {

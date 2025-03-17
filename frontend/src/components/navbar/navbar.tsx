@@ -7,6 +7,7 @@ import {
   List,
   Tooltip,
   Button,
+  Spinner,
 } from "@material-tailwind/react";
 import {
   Menu as MenuIcon,
@@ -44,7 +45,8 @@ export default function NavbarWithMegaMenu() {
   }, []);
 
   return (
-    <Navbar className="mx-auto w-full my-2 max-w-screen-xl dark:text-white dark:bg-slate-600 dark:border-none">
+    <>
+    {!isLoading && <Navbar className="mx-auto w-full my-2 max-w-screen-xl dark:text-white dark:bg-slate-600 dark:border-none">
       <div className="flex items-center">
         <Typography
           as="a"
@@ -122,6 +124,9 @@ export default function NavbarWithMegaMenu() {
           Sign In
         </Button>}
       </Collapse>
-    </Navbar>
+    </Navbar>}
+
+    {isLoading && <Spinner className="mx-auto my-9"/>}
+    </>
   );
 }

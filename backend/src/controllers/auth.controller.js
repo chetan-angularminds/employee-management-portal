@@ -1,4 +1,4 @@
-import Organisation from "../models/organisation.model.js";
+import constants from "../constants/index.js";
 import services from "../services/index.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
@@ -52,7 +52,7 @@ const verifyUser = asyncHandler(async (req, res) => {
 });
 
 const isAdmin = asyncHandler(async (req, res) => {
-    if (req.user.role !== "admin") {
+    if (req.user.role !== constants.UserRoles.ADMIN) {
         throw new ApiError(401, "user is not admin");
     }
 
@@ -76,7 +76,6 @@ const verifyRegistrationToken = asyncHandler(async (req, res) => {
 });
 
 const registerOrg = asyncHandler(async (req, res) => {
-    console.log(req.body);
     const organisation = await services.authService.registerOrganisation(
         req.body,
         req.user

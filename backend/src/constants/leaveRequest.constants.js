@@ -1,0 +1,37 @@
+const LeaveTypes = {
+    CASUAL: "CASUAL",
+    SICK: "SICK",
+    ANNUAL: "ANNUAL",
+    MATERNITY: "MATERNITY",
+    PATERNITY: "PATERNITY",
+    COMPENSATORY: "COMPENSATORY",
+    BEREAVEMENT: "BEREAVEMENT",
+    UNPAID: "UNPAID",
+    MARRIAGE: "MARRIAGE",
+    BIRTHDAY: "BIRTHDAY",
+    STUDY: "STUDY",
+    SABBATICAL: "SABBATICAL",
+    MEDICAL: "MEDICAL",
+    RELIGIOUS: "RELIGIOUS",
+    JURY_DUTY: "JURY_DUTY",
+    EXAMINATION: "EXAMINATION",
+    EMERGENCY: "EMERGENCY",
+    PENALTY: "PENALTY",
+};
+const LeaveIntervals = {
+    FIRSTHALF: "FIRSTHALF",
+    SECONDHALF: "SECONDHALF",
+    FULLDAY: "FULLDAY",
+};
+
+const LeaveStatus = {
+    PENDING: "PENDING",
+    APPROVED: "APPROVED",
+    REJECTED: "REJECTED",
+    CANCELLED: "CANCELLED",
+    WITHDRAWN: "WITHDRAWN"
+};
+
+
+const LeaveConstants = { LeaveIntervals, LeaveTypes, LeaveStatus };
+export default LeaveConstants;

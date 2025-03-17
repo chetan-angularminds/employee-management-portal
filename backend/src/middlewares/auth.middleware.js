@@ -4,6 +4,14 @@ import asyncHandler from "../utils/asyncHandler.js";
 import config from "../config/env.config.js";
 import ApiError from "../utils/ApiError.js";
 import httpStatus from "http-status";
+import constants from "../constants/index.js";
+
+/**
+ * Middleware to authenticate a user using a JWT access token
+ * @param {Request} req - The request object
+ * @param {Response} res - The response object
+ * @param {Function} next - The next middleware function    
+ */
 const authMiddleware = asyncHandler(async (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
@@ -26,7 +34,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
 
     if (!user) {
         throw new ApiError(404, "User not found");
-    } else if (user.status === "inactive") {
+    } else if (user.status === constants.UserStatus.Inactive) {
         throw new ApiError(403, "User is inactive");
     } else if (user.deleted) {
         throw new ApiError(403, "User is deleted");

@@ -3,6 +3,7 @@ import validator from "validator";
 import ApiError from "../utils/ApiError.js";
 import plugins from "./plugins/index.js";
 import middlewares from "../middlewares/index.js";
+import httpStatus from "http-status";
 
 const logoSchema = new mongoose.Schema({
     publicId: { type: String, required: [true, "publicId is required"] },
@@ -45,7 +46,7 @@ const organisationSchema = new mongoose.Schema(
                 if (!validator.isEmail(value)) {
                     throw new ApiError(
                         httpStatus.BAD_REQUEST,
-                        "Inavalid Email"
+                        "Invalid Email"
                     );
                 }
             },
@@ -75,6 +76,10 @@ const organisationSchema = new mongoose.Schema(
                 state: { type: String },
                 zip: { type: String },
             },
+        },
+        logo: {
+            type: logoSchema,
+            required: false,
         },
         timezone: { type: String },
         locale: { type: String },
