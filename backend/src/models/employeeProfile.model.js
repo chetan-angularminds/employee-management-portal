@@ -569,6 +569,100 @@ const relationsSchema = {
     },
 };
 
+const jobDetailsSchema = {
+    jobTitlePrimary: {
+        type: String,
+        required: [true, "Job title is required"],
+    },
+    jobTitleSecondary: {
+        type: String,
+        required: false,
+    },
+    department: {
+        type: String,
+        required: [true, "Department is required"],
+    },
+    position: {
+        type: String,
+        required: [true, "Position is required"],
+    },
+    dateOfJoining: {
+        type: Date,
+        required: [true, "Date of joining is required"],
+    },
+    dateOfExit: {
+        type: Date,
+        required: false,
+    },
+    employeeId: {
+        type: String,
+        required: [true, "Employee ID is required"],
+    },
+    workerType: {
+        type: String,
+        required: false,
+    },
+    timeType: {
+        type: String,
+        required: false,
+    },
+    contractStatus: {
+        type: String,
+        required: false,
+    },
+    payBand: {
+        type: String,
+        required: false,
+    },
+    payGrade: {
+        type: String,
+        required: false,
+    },
+    isInProbation: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    probationStartDate: {
+        type: Date,
+        required: [
+            function () {
+                return;
+            },
+            "Probation start date is required",
+        ],
+        default: function () {
+            return this.jobDetails.isInProbation
+                ? this.jobDetails.dateOfJoining
+                : null;
+        },
+    },
+    probationEndDate: {
+        type: Date,
+        required: [
+            function () {
+                return this.jobDetails.isInProbation;
+            },
+            "Probation end date is required",
+        ],
+    },
+    probationPolicy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "probationPolicy",
+        required: [
+            function () {
+                return this.jobDetails.isInProbation;
+            },
+            "Probation policy is reequired",
+        ],
+    },
+    reportingManager: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "Reporting manager is required"],
+    },
+};
+
 const employeeProfileSchema = new mongoose.Schema(
     {
         user: {
@@ -619,38 +713,11 @@ const employeeProfileSchema = new mongoose.Schema(
             type: {
                 addressProof: [documentSchema],
                 identityProof: [documentSchema],
-                
             },
         },
-        reportingManager: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+        jobDetails: {
+            type: jobDetailsSchema,
             required: true,
-        },
-        position: {
-            type: String,
-            required: [true, "Position is required"],
-        },
-        jobTitle: {
-            type: String,
-            required: [true, "Job title is required"],
-        },
-        department: {
-            type: String,
-            required: [true, "Department is required"],
-        },
-        dateOfJoining: {
-            type: Date,
-            required: [true, "Date of joining is required"],
-        },
-
-        dateOfExit: {
-            type: Date,
-            required: false,
-        },
-        employeeId: {
-            type: String,
-            required: [true, "Employee ID is required"],
         },
     },
     {

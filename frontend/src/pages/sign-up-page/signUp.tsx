@@ -34,14 +34,19 @@ const SignupPage = () => {
 
   useEffect(() => {
     if (id) {
+      console.log("registration TOken: ", id);
+
       authService.checkIdValidity(id).then((response) => {
         if (response.success) {
           setStep("org");
         } else {
           setStep("user");
+          console.log(response);
 
           if (response.redirect) {
             Navigate(response.redirect);
+          } else {
+            Navigate("/auth/sign-up");
           }
         }
       });
@@ -52,20 +57,30 @@ const SignupPage = () => {
     setisLoading(true);
     const response = await authService.register(userDetails);
     console.log(response);
-
+    if (response.success && response.data) {
+      localStorage.setItem("token", response.data.authTokens.token);
+      localStorage.setItem("tokenExpiry", response.data.authTokens.expiryTime);
+    }
     if (response?.data?.user?.registrationToken) {
+      setisLoading(false);
       Navigate(`/auth/sign-up/${response.data.user.registrationToken}`);
       localStorage.setItem(
         "registerToken",
         response.data.user.registrationToken
       );
+
       setStep("org");
+    } else {
+      getToast("error", response.message);
     }
     setisLoading(false);
   };
 
   const handleOrgSubmit = async (data: OrgDetails) => {
-    const result = await authService.createOrganization(data);
+    const result = await authService.createOrganization({
+      ...data,
+      registrationToken: id,
+    });
     if (result.success) {
       getToast("success", "Organization Registered Successfully!");
       localStorage.removeItem("registerToken");

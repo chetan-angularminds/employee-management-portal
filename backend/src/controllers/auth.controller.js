@@ -67,8 +67,8 @@ const verifyRegistrationToken = asyncHandler(async (req, res) => {
     if (req.user.organisation)
         throw new ApiError(401, "Already registered please login", "/");
 
-    if (token == registrationToken) {
-        throw new ApiError(401, "Invalid registration token");
+    if (token !== registrationToken) {
+        throw new ApiError(401, "Invalid registration token", "/auth/sign-up");
     }
 
     const response = new ApiResponse(200, true, "Registration token is valid");
@@ -80,6 +80,9 @@ const registerOrg = asyncHandler(async (req, res) => {
         req.body,
         req.user
     );
+    const user = req.user;
+    user.registrationToken = null;
+    user.save();
     const response = new ApiResponse(
         200,
         { organisation },

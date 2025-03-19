@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BehaviorSubject } from "rxjs";
-import { Credentials, IsUserAuthenticatedResponse, SignInResponse, SignUpResponse } from "../interfaces/auth.interfaces";
+import {
+  Credentials,
+  IsUserAuthenticatedResponse,
+  SignInResponse,
+  SignUpResponse,
+} from "../interfaces/auth.interfaces";
 import api from "./api.service";
 import { getToast } from "./toasts.service";
 import { ApiError } from "../interfaces/apiError.interface";
 import { useNavigate } from "react-router-dom";
 
-
 class AuthService {
-
-  
-
   private isUserAuthenticatedSubject: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
   get isUserAuthenticated$() {
@@ -31,7 +32,7 @@ class AuthService {
   constructor() {
     this.isAuthenticated();
   }
-  tokenSaver(data:any){
+  tokenSaver(data: any) {
     if (data.token) {
       localStorage.setItem("token", data.token);
       this.setisUserAuthenticated(true);
@@ -44,7 +45,7 @@ class AuthService {
     return api
       .post("auth/login", credentials)
       .then((response) => {
-        this.tokenSaver(response.data.data)
+        this.tokenSaver(response.data.data);
         return response.data;
       })
       .catch((err) => {
@@ -58,7 +59,7 @@ class AuthService {
     return api
       .post("auth/register", userDetails)
       .then((response: any) => {
-        this.tokenSaver(response.data.data)
+        this.tokenSaver(response.data.data);
         return response.data;
       })
       .catch((err) => {
@@ -76,9 +77,9 @@ class AuthService {
     this.setisUserAuthenticated(false);
   }
   async isAuthenticated(): Promise<boolean> {
-    this.setisLoading(true)
+    this.setisLoading(true);
     if (!this.getAccessToken()) {
-      this.setisLoading(false)
+      this.setisLoading(false);
       return false;
     }
     const result = await api
@@ -95,15 +96,14 @@ class AuthService {
       })
       .catch((_err) => {
         getToast("error", _err?.response?.data?.message || "failed to fetch");
-        this.logout()
+        this.logout();
         this.setisUserAuthenticated(false);
         return false;
       });
-      
-      
-      setTimeout(()=>{
-        this.setisLoading(false)
-      },2000)
+
+    setTimeout(() => {
+      this.setisLoading(false);
+    }, 2000);
     return result;
   }
 
@@ -121,7 +121,6 @@ class AuthService {
         return false;
       });
   }
-
 
   async createOrganization(organizationDetails: any): Promise<any> {
     return api
@@ -149,11 +148,10 @@ class AuthService {
       .then((response: any) => {
         return response.data;
       })
-      .catch((err:ApiError) => {
+      .catch((err: ApiError) => {
         console.log(err);
         if (err.response.data.redirect) {
           console.log("hello");
-          
         }
         return err.response.data;
       });

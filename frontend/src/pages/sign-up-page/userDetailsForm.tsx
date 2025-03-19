@@ -34,6 +34,8 @@ function UserDetailsForm({ onSubmit, isLoading }: UserDetailsFormProps) {
       }
       if (!data.userName) {
         errors.userName = { message: "User Name is required" };
+      } else if (!/^[a-zA-Z0-9-_]+$/.test(data.userName)) {
+        errors.userName = { message: "Only alphabets, numbers, -, _ are allowed in user name" };
       }
       if (!data.fullName.firstName) {
         errors.fullName = errors.fullName || {};

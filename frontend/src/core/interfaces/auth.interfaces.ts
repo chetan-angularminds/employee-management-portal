@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface Credentials{
-    username?: string;
-    email?: string;
-    password: string;
-} 
+export interface Credentials {
+  username?: string;
+  email?: string;
+  password: string;
+}
 
 export interface SignInResponse {
   statusCode: number;
@@ -18,10 +18,9 @@ export interface Data {
   expiryTime: string;
 }
 
-
 export interface IsUserAuthenticatedResponse {
   statusCode: number;
-  data:{ [key: string]: any } | null | string;
+  data: { [key: string]: any } | null | string;
   message: string;
   success: boolean;
   redirect: null;
@@ -31,14 +30,15 @@ export interface SignUpResponse {
   statusCode: number;
   data: {
     user: User;
-    token: string;
-    expiryTime: string;
-  }| null ;
+    authTokens: {
+      token: string;
+      expiryTime: string;
+    };
+  } | null;
   message: string;
   success: boolean;
   redirect: null;
 }
-
 
 interface User {
   fullName: FullName;

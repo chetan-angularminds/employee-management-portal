@@ -24,13 +24,13 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
     try {
         decoded = jwt.verify(token, config.jwt.secret);
     } catch (err) {
-        // console.log(err.message);
+        console.log(err.message);
         if (err.message === "jwt expired") {
             throw new ApiError(httpStatus.UNAUTHORIZED, "session expired");
         }
         
     }
-    const user = await models.User.findById(decoded.id); // Assuming the token contains the user ID
+    const user = await models.User.findById(decoded?.id); // Assuming the token contains the user ID
 
     if (!user) {
         throw new ApiError(404, "User not found");

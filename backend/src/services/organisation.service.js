@@ -1,5 +1,6 @@
+import ApiError from "../utils/ApiError.js";
 import models from "./../models/index.js";
-
+import httpStatus from "http-status";
 /**
  * Creates a new organisation
  * @param {Object} orgDetails - The details of the organisation to create
@@ -17,9 +18,11 @@ const createOrgnisation = async (orgDetails, user) => {
         );
     }
 
-    const org = await models.Organisation.create(orgDetails);
-    org.createdBy = user._id;
-    org.updatedBy = user._id;
+    const org = await models.Organisation.create({
+        createdBy: user._id,
+        updatedBy: user._id,
+        ...orgDetails,
+    });
     org.save();
     return org;
 };
@@ -78,7 +81,10 @@ const updateOrganisation = async (orgId, orgDetails, user) => {
     if (!org) {
         throw new ApiError(httpStatus.NOT_FOUND, "Organisation not found");
     }
-    if (orgDetails.email && (await models.Organisation.isEmailTaken(orgDetails.email, orgId))) {
+    if (
+        orgDetails.email &&
+        (await models.Organisation.isEmailTaken(orgDetails.email, orgId))
+    ) {
         throw new ApiError(
             httpStatus.BAD_REQUEST,
             `Email ${orgDetails.email} is already taken`
@@ -88,7 +94,7 @@ const updateOrganisation = async (orgId, orgDetails, user) => {
     org.updatedBy = user._id;
     await org.save();
     return org;
-}
+};
 
 /**
  * Deletes an organisation
@@ -103,7 +109,7 @@ const deleteOrganisation = async (orgId) => {
     }
     await org.delete();
     return org;
-}
+};
 
 const organisationService = {
     createOrgnisation,
