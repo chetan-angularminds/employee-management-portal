@@ -4,28 +4,14 @@ import ApiError from "../utils/ApiError.js";
 import plugins from "./plugins/index.js";
 import middlewares from "../middlewares/index.js";
 import httpStatus from "http-status";
+import reusableSchemas from "./reusableSchemas/index.js";
 
 const logoSchema = new mongoose.Schema({
     publicId: { type: String, required: [true, "publicId is required"] },
     url: { type: String, required: [true, "URL is required"] },
 });
 
-const contactNumberSchema = new mongoose.Schema({
-    countryCode: { type: String },
-    number: {
-        type: String,
-        required: true,
-        index: true,
-        validate(value) {
-            if (!validator.isNumeric(value)) {
-                throw new ApiError(
-                    httpStatus.BAD_REQUEST,
-                    "Invalid Contact Number"
-                );
-            }
-        },
-    },
-});
+
 
 const organisationSchema = new mongoose.Schema(
     {
@@ -52,7 +38,7 @@ const organisationSchema = new mongoose.Schema(
             },
         },
         phone: {
-            type: contactNumberSchema,
+            type: reusableSchemas.contactNumberSchema,
             required: true,
         },
         fax: { type: String },

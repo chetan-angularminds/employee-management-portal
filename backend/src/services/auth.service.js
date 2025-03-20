@@ -52,7 +52,6 @@ const loginWithEmailAndPassword = async (credentials) => {
  */
 const registerUser = async (userDetails) => {
     const user = await services.userService.createUser(userDetails);
-    user.save();
     return user;
 };
 
@@ -98,8 +97,6 @@ const changeUserPassword = async (oldPassword, newPassword, userId) => {
     user.password = newPassword;
     await user.save();
 };
-
-
 
 const authService = {
     loginWithEmailAndPassword,

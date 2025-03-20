@@ -4,7 +4,7 @@ const UserStatus = {
     Invited: "INVITED",
 };
 
-console.log(Object.values(UserStatus));
+// console.log(Object.values(UserStatus));
 
 
 export default UserStatus

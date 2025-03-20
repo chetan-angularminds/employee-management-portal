@@ -1,82 +1,8 @@
 import mongoose from "mongoose";
 import plugins from "./plugins/index.js";
 import models from "./index.js";
-
-const fullNameSchema = {
-    firstName: {
-        type: String,
-        required: [true, "First name is required"],
-        index: true,
-        trim: true,
-    },
-    middleName: {
-        type: String,
-        required: false,
-        index: true,
-        trim: true,
-    },
-    lastName: {
-        type: String,
-        required: [true, "Last name is required"],
-        index: true,
-        trim: true,
-    },
-};
-
-const avatarSchema = {
-    publicId: { type: String, required: [true, "publicId is required"] },
-    url: { type: String, required: [true, "URL is required"] },
-};
-
-const contactNumberSchema = {
-    countryCode: { type: String },
-    number: {
-        type: String,
-        required: true,
-        index: true,
-        validate(value) {
-            if (!validator.isNumeric(value)) {
-                throw new ApiError(
-                    httpStatus.BAD_REQUEST,
-                    "Invalid Contact Number"
-                );
-            }
-        },
-    },
-};
-
-const addressSchema = {
-    street: {
-        type: String,
-        required: [true, "Street address is required"],
-        trim: true,
-    },
-    addressLine2: {
-        type: String,
-        required: false,
-        trim: true,
-    },
-    city: {
-        type: String,
-        required: [true, "City is required"],
-        trim: true,
-    },
-    state: {
-        type: String,
-        required: [true, "State is required"],
-        trim: true,
-    },
-    postalCode: {
-        type: String,
-        required: [true, "Postal code is required"],
-        trim: true,
-    },
-    country: {
-        type: String,
-        required: [true, "Country is required"],
-        trim: true,
-    },
-};
+import reusableSchemas from "./reusableSchemas/index.js";
+import constants from "../constants/index.js";
 
 const documentSchema = {
     documentName: {
@@ -458,7 +384,7 @@ const educationSchema = {
 
 const primaryDetailsSchema = {
     fullName: {
-        type: fullNameSchema,
+        type: reusableSchemas.fullNameSchema,
         required: true,
     },
     dateOfBirth: {
@@ -511,15 +437,15 @@ const contactDetailsSchema = {
         required: false,
     },
     mobileNumber: {
-        type: contactNumberSchema,
+        type: reusableSchemas.contactNumberSchema,
         required: [true, "Mobile number is required"],
     },
     workNumber: {
-        type: contactNumberSchema,
+        type: reusableSchemas.contactNumberSchema,
         required: false,
     },
     residenceNumber: {
-        type: contactNumberSchema,
+        type: reusableSchemas.contactNumberSchema,
         required: false,
     },
     skype: {
@@ -556,7 +482,7 @@ const relationsSchema = {
         trim: true,
     },
     mobileNumber: {
-        type: contactNumberSchema,
+        type: reusableSchemas.contactNumberSchema,
         required: [true, "Mobile number is required"],
     },
     profession: {
@@ -671,7 +597,6 @@ const employeeProfileSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-
         primaryDetails: {
             type: primaryDetailsSchema,
             required: true,
@@ -681,7 +606,7 @@ const employeeProfileSchema = new mongoose.Schema(
             required: false,
         },
         avatar: {
-            type: avatarSchema,
+            type: reusableSchemas.avatarSchema,
             required: false,
         },
         education: {
@@ -695,11 +620,11 @@ const employeeProfileSchema = new mongoose.Schema(
         address: {
             type: {
                 currentAddress: {
-                    type: addressSchema,
+                    type: reusableSchemas.addressSchema,
                     required: [true, "Current address is required"],
                 },
                 permanentAddress: {
-                    type: addressSchema,
+                    type: reusableSchemas.addressSchema,
                     required: [true, "Permanent address is required"],
                 },
             },
@@ -741,13 +666,16 @@ employeeProfileSchema.pre("save", async function (next) {
         organisation: this.user.organisation,
     });
     if (!config) {
+        config  = {
+            departments: Object.values(constants)
+        }
     }
 
-    if (!config.positions.includes(this.position)) {
-        return next(new Error(`Invalid position: ${this.position}`));
+    if (!config.positions.includes(this.jobDetails.position)) {
+        return next(new Error(`Invalid position: ${this.jobDetails.position}`));
     }
-    if (!config.departments.includes(this.department)) {
-        return next(new Error(`Invalid department: ${this.department}`));
+    if (!config.departments.includes(this.jobDetails.department)) {
+        return next(new Error(`Invalid department: ${this.jobDetails.department}`));
     }
 
     next();

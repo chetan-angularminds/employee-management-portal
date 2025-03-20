@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import config from "../config/env.config.js";
 import middlewares from "../middlewares/index.js";
 import moment from "moment";
+import reusableSchemas from "./reusableSchemas/index.js";
 
 const fullNameSchema = new mongoose.Schema({
     firstName: {
@@ -25,23 +26,6 @@ const fullNameSchema = new mongoose.Schema({
     },
 });
 
-
-const contactNumberSchema = new mongoose.Schema({
-    countryCode: { type: String },
-    number: {
-        type: String,
-        required: true,
-        index: true,
-        validate(value) {
-            if (!validator.isNumeric(value)) {
-                throw new ApiError(
-                    httpStatus.BAD_REQUEST,
-                    "Invalid Contact Number"
-                );
-            }
-        },
-    },
-});
 
 const userSchema = new mongoose.Schema(
     {
@@ -73,7 +57,7 @@ const userSchema = new mongoose.Schema(
             ],
         },
         contactNumber: {
-            type: contactNumberSchema,
+            type: reusableSchemas.contactNumberSchema,
             required: true,
         },
         organisation: {
@@ -113,10 +97,9 @@ const userSchema = new mongoose.Schema(
             ref: "EmployeeProfile",
             required: false,
         },
-        registrationToken: { type: String, required : false },
+        registrationToken: { type: String, required: false },
         lastLogin: { type: Date },
         lastLoginIp: { type: String },
-
     },
     {
         timestamps: true,
@@ -194,7 +177,7 @@ userSchema.methods.generateAccessToken = function () {
 
 userSchema.pre("save", function (next) {
     if (!this.isNew) {
-        next();
+        return next();
     }
     const token = jwt.sign(
         {
@@ -205,7 +188,8 @@ userSchema.pre("save", function (next) {
         },
         config.jwt.secret
     );
-    this.registrationToken = token;
+
+    this.registrationToken = bcrypt.hashSync(token, 10);
     next();
 });
 

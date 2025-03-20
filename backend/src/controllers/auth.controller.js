@@ -61,13 +61,15 @@ const isAdmin = asyncHandler(async (req, res) => {
 });
 
 const verifyRegistrationToken = asyncHandler(async (req, res) => {
-    const { token } = req.params;
+    const token = decodeURIComponent(req.params.token);
     const { registrationToken } = req.user;
-
+    await req.user.save();
     if (req.user.organisation)
         throw new ApiError(401, "Already registered please login", "/");
 
     if (token !== registrationToken) {
+        console.log(token, " <===> ", registrationToken);
+
         throw new ApiError(401, "Invalid registration token", "/auth/sign-up");
     }
 

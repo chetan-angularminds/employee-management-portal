@@ -140,7 +140,7 @@ class AuthService {
 
   async checkIdValidity(id: string): Promise<IsUserAuthenticatedResponse> {
     return api
-      .get(`/auth/check-id/${id}`, {
+      .get(`/auth/check-id/${encodeURIComponent(id)}`, {
         headers: {
           Authorization: `Bearer ${this.getAccessToken()}`,
         },
