@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import plugins from "./plugins/index.js";
-import models from "./index.js";
 import reusableSchemas from "./reusableSchemas/index.js";
 import constants from "../constants/index.js";
+import getOrgConfig from "../utils/getOrgConfig.js";
+import logger from "../config/logger.config.js";
 
 const documentSchema = {
     documentName: {
@@ -655,28 +656,76 @@ employeeProfileSchema.plugin(plugins.privatePlugin);
 employeeProfileSchema.plugin(plugins.softDelete);
 
 employeeProfileSchema.pre("save", async function (next) {
+    // Populate user with organisation details
     await this.populate("user", "organisation");
 
+    // Helper function to create and throw ValidationError
+    const throwValidationError = (field, value, message) => {
+        const error = new ValidationError(this);
+        error.errors[field] = new mongoose.Error.ValidatorError({
+            message,
+            path: field,
+            value,
+        });
+        logger.logMessage("error", `Validation failed: ${message}`, {
+            field,
+            value,
+        });
+        return next(error);
+    };
+
+    // Check if user or organisation is missing
     if (!this.user || !this.user.organisation) {
-        return next(new Error("User or organisation not found"));
+        return throwValidationError(
+            "user",
+            this.user,
+            "User or organisation not found"
+        );
     }
 
-    const OrganisationConfig = models.OrganisationConfig;
-    const config = await OrganisationConfig.findOne({
-        organisation: this.user.organisation,
-    });
+    // Fetch organisation configuration
+    const config = await getOrgConfig(this.user.organisation);
     if (!config) {
-        config  = {
-            departments: Object.values(constants)
+        logger.logMessage("error", "Failed to fetch organisation config", {
+            organisation: this.user.organisation,
+        });
+        return next(new Error("Organisation configuration not available"));
+    }
+
+    // Define validation rules for job details
+    const validations = [
+        {
+            field: "jobDetails.position",
+            value: this.jobDetails.position,
+            list: config.positions,
+            message: `Invalid position: ${this.jobDetails.position}`,
+        },
+        {
+            field: "jobDetails.department",
+            value: this.jobDetails.department,
+            list: config.departments,
+            message: `Invalid department: ${this.jobDetails.department}`,
+        },
+        {
+            field: "jobDetails.workerType",
+            value: this.jobDetails.workerType,
+            list: config.workerTypes,
+            message: `Invalid worker type: ${this.jobDetails.workerType}`,
+            optional: true, // WorkerType is optional
+        },
+    ];
+
+    // Validate job details fields
+    for (const { field, value, list, message, optional } of validations) {
+        if ((!optional || value) && !list.includes(value)) {
+            return throwValidationError(field, value, message);
         }
     }
 
-    if (!config.positions.includes(this.jobDetails.position)) {
-        return next(new Error(`Invalid position: ${this.jobDetails.position}`));
-    }
-    if (!config.departments.includes(this.jobDetails.department)) {
-        return next(new Error(`Invalid department: ${this.jobDetails.department}`));
-    }
+    // Log successful validation (optional, can remove if not needed)
+    logger.logMessage("info", "Employee profile validation passed", {
+        employeeId: this.jobDetails.employeeId,
+    });
 
     next();
 });

@@ -76,8 +76,8 @@ const handleTypeError = (err) => {
 const errorHandler = (error, req, res, next) => {
     error.statusCode = error.statusCode || 500;
     error.status = error.status || "error";
-    logger.logMessage("error", JSON.stringify(error));
-    console.error(error)
+    logger.logMessage("error", error.message);
+    console.error(error);
 
     const response = errorResponseGenerator(error);
     res.status(error.statusCode).json(response);
