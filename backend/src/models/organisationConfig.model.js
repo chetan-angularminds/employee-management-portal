@@ -1,5 +1,7 @@
+// models/organisationConfig.js
 import mongoose from "mongoose";
 import plugins from "./plugins/index.js";
+import logger from "../config/logger.config.js";
 
 const organisationConfigSchema = new mongoose.Schema(
     {
@@ -9,23 +11,14 @@ const organisationConfigSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
-        // List of valid job titles
         jobTitles: [{ type: String, trim: true }],
-        // List of valid departments
         departments: [{ type: String, trim: true }],
-        // List of valid positions
         positions: [{ type: String, trim: true }],
-        // List of valid worker types
         workerTypes: [{ type: String, trim: true }],
-        // List of valid work time types (e.g., Full-Time, Part-Time)
         workTimeTypes: [{ type: String, trim: true }],
-        // List of valid contract statuses (e.g., Permanent, Temporary)
         contractStatuses: [{ type: String, trim: true }],
-        // List of valid pay bands (e.g., Band A, Band B)
         payBands: [{ type: String, trim: true }],
-        // List of valid pay grades (e.g., Grade 1, Grade 2)
         payGrades: [{ type: String, trim: true }],
-        // Probation configuration
         probation: {
             type: {
                 allowedPolicies: [
@@ -76,13 +69,17 @@ const organisationConfigSchema = new mongoose.Schema(
     }
 );
 
-// Add plugins for pagination and soft delete
 organisationConfigSchema.plugin(plugins.paginate);
 organisationConfigSchema.plugin(plugins.softDelete);
 organisationConfigSchema.plugin(plugins.privatePlugin);
 
-const OrganisationConfig = mongoose.model(
-    "OrganisationConfig",
-    organisationConfigSchema
-);
+organisationConfigSchema.pre("save", async function (next) {
+    logger.logMessage("info", `${this.isNew ? "Creating" : "Updating"} organisation config`, {
+        organisation: this.organisation,
+        updatedBy: this.updatedBy,
+    });
+    next();
+});
+
+const OrganisationConfig = mongoose.model("OrganisationConfig", organisationConfigSchema);
 export default OrganisationConfig;

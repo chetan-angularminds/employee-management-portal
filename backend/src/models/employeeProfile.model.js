@@ -554,33 +554,31 @@ const jobDetailsSchema = {
         type: Date,
         required: [
             function () {
-                return;
+                return this.isInProbation;
             },
-            "Probation start date is required",
+            "Probation start date is required if in probation",
         ],
         default: function () {
-            return this.jobDetails.isInProbation
-                ? this.jobDetails.dateOfJoining
-                : null;
+            return this.isInProbation ? this.dateOfJoining : null;
         },
     },
     probationEndDate: {
         type: Date,
         required: [
             function () {
-                return this.jobDetails.isInProbation;
+                return this.isInProbation;
             },
-            "Probation end date is required",
+            "Probation end date is required if in probation",
         ],
     },
     probationPolicy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "probationPolicy",
+        ref: "OrganisationPolicy", // Updated reference
         required: [
             function () {
-                return this.jobDetails.isInProbation;
+                return this.isInProbation;
             },
-            "Probation policy is reequired",
+            "Probation policy is required if in probation",
         ],
     },
     reportingManager: {
@@ -656,10 +654,8 @@ employeeProfileSchema.plugin(plugins.privatePlugin);
 employeeProfileSchema.plugin(plugins.softDelete);
 
 employeeProfileSchema.pre("save", async function (next) {
-    // Populate user with organisation details
     await this.populate("user", "organisation");
 
-    // Helper function to create and throw ValidationError
     const throwValidationError = (field, value, message) => {
         const error = new ValidationError(this);
         error.errors[field] = new mongoose.Error.ValidatorError({
@@ -674,7 +670,6 @@ employeeProfileSchema.pre("save", async function (next) {
         return next(error);
     };
 
-    // Check if user or organisation is missing
     if (!this.user || !this.user.organisation) {
         return throwValidationError(
             "user",
@@ -683,7 +678,6 @@ employeeProfileSchema.pre("save", async function (next) {
         );
     }
 
-    // Fetch organisation configuration
     const config = await getOrgConfig(this.user.organisation);
     if (!config) {
         logger.logMessage("error", "Failed to fetch organisation config", {
@@ -692,13 +686,12 @@ employeeProfileSchema.pre("save", async function (next) {
         return next(new Error("Organisation configuration not available"));
     }
 
-    // Define validation rules for job details
     const validations = [
         {
-            field: "jobDetails.position",
-            value: this.jobDetails.position,
-            list: config.positions,
-            message: `Invalid position: ${this.jobDetails.position}`,
+            field: "jobDetails.jobTitlePrimary",
+            value: this.jobDetails.jobTitlePrimary,
+            list: config.jobTitles,
+            message: `Invalid job title: ${this.jobDetails.jobTitlePrimary}`,
         },
         {
             field: "jobDetails.department",
@@ -707,22 +700,108 @@ employeeProfileSchema.pre("save", async function (next) {
             message: `Invalid department: ${this.jobDetails.department}`,
         },
         {
+            field: "jobDetails.position",
+            value: this.jobDetails.position,
+            list: config.positions,
+            message: `Invalid position: ${this.jobDetails.position}`,
+        },
+        {
             field: "jobDetails.workerType",
             value: this.jobDetails.workerType,
             list: config.workerTypes,
             message: `Invalid worker type: ${this.jobDetails.workerType}`,
-            optional: true, // WorkerType is optional
+            optional: true,
+        },
+        {
+            field: "jobDetails.timeType",
+            value: this.jobDetails.timeType,
+            list: config.workTimeTypes,
+            message: `Invalid time type: ${this.jobDetails.timeType}`,
+            optional: true,
+        },
+        {
+            field: "jobDetails.contractStatus",
+            value: this.jobDetails.contractStatus,
+            list: config.contractStatuses,
+            message: `Invalid contract status: ${this.jobDetails.contractStatus}`,
+            optional: true,
+        },
+        {
+            field: "jobDetails.payBand",
+            value: this.jobDetails.payBand,
+            list: config.payBands,
+            message: `Invalid pay band: ${this.jobDetails.payBand}`,
+            optional: true,
+        },
+        {
+            field: "jobDetails.payGrade",
+            value: this.jobDetails.payGrade,
+            list: config.payGrades,
+            message: `Invalid pay grade: ${this.jobDetails.payGrade}`,
+            optional: true,
         },
     ];
 
-    // Validate job details fields
     for (const { field, value, list, message, optional } of validations) {
         if ((!optional || value) && !list.includes(value)) {
             return throwValidationError(field, value, message);
         }
     }
 
-    // Log successful validation (optional, can remove if not needed)
+    // Validate probation policy
+    if (this.jobDetails.isInProbation) {
+        if (!this.jobDetails.probationPolicy) {
+            return throwValidationError(
+                "jobDetails.probationPolicy",
+                null,
+                "Probation policy is required when employee is in probation"
+            );
+        }
+
+        const validPolicy = config.probation.allowedPolicies.find(
+            (policy) =>
+                policy._id.toString() ===
+                this.jobDetails.probationPolicy.toString()
+        );
+        if (
+            !validPolicy ||
+            validPolicy.type !==
+                constants.OrganisationConstants.POLICY_TYPES_SUGGESTIONS
+                    .PROBATION
+        ) {
+            return throwValidationError(
+                "jobDetails.probationPolicy",
+                this.jobDetails.probationPolicy,
+                `Invalid probation policy ID: ${this.jobDetails.probationPolicy}`
+            );
+        }
+
+        if (
+            this.jobDetails.probationStartDate &&
+            this.jobDetails.probationEndDate
+        ) {
+            const probationDays = Math.ceil(
+                (this.jobDetails.probationEndDate -
+                    this.jobDetails.probationStartDate) /
+                    (1000 * 60 * 60 * 24)
+            );
+            let maxAllowedDays = validPolicy.details.duration;
+            if (
+                validPolicy.details.extensionAllowed &&
+                validPolicy.details.maxExtensionDays
+            ) {
+                maxAllowedDays += validPolicy.details.maxExtensionDays;
+            }
+            if (probationDays > maxAllowedDays) {
+                return throwValidationError(
+                    "jobDetails.probationEndDate",
+                    this.jobDetails.probationEndDate,
+                    `Probation period exceeds max allowed: ${maxAllowedDays} days (Policy: ${validPolicy.name})`
+                );
+            }
+        }
+    }
+
     logger.logMessage("info", "Employee profile validation passed", {
         employeeId: this.jobDetails.employeeId,
     });
