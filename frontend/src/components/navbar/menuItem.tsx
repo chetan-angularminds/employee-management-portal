@@ -1,17 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from "react";
-import { Typography, List, Menu } from "@material-tailwind/react";
-import {
-  Community,
-  Globe,
-  GridPlus,
-  Hashtag,
-  JournalPage,
-  Phone,
-  Post,
-  SelectFace3d,
-  SunLight,
-} from "iconoir-react";
+import * as React from "react"
+import { Typography, List, type Menu } from "@material-tailwind/react"
+import { Community, Globe, GridPlus, Hashtag, JournalPage, Phone, Post, SelectFace3d, SunLight } from "iconoir-react"
 
 const navListMenuItems = [
   {
@@ -59,14 +49,14 @@ const navListMenuItems = [
     description: "Explore limited-time deals and bundles",
     icon: Hashtag,
   },
-];
+]
 
 const MenuItem = React.forwardRef<
   typeof Menu.Item,
   {
-    title: string;
-    description: string;
-    icon?: React.ElementType;
+    title: string
+    description: string
+    icon?: React.ElementType
   }
 >(({ title, description, icon: Icon, ...rest }, ref: any) => {
   return (
@@ -74,35 +64,31 @@ const MenuItem = React.forwardRef<
       ref={ref}
       as="a"
       href="#"
-      className="p-1.5 dark:text-white dark:bg-purple-700 dark:hover:bg-purple-500"
+      className="p-2 dark:text-white dark:bg-slate-800 dark:hover:bg-purple-600 transition-colors duration-200 rounded-md hover:shadow-sm"
       {...rest}
     >
       {Icon && (
         <List.ItemStart>
-          <div className="flex items-center justify-center rounded-[5px] bg-surface-light p-2 dark:bg-purple-800">
-            <Icon className="h-6 w-6 text-black dark:text-white" />
+          <div className="flex items-center justify-center rounded-lg bg-surface-light p-2.5 dark:bg-purple-800 shadow-sm">
+            <Icon className="h-5 w-5 text-black dark:text-white" />
           </div>
         </List.ItemStart>
       )}
-      <div className="leading-none">
-        <Typography color="default" className="mb-0.5 text-sm font-semibold">
+      <div className="leading-tight ml-2">
+        <Typography color="default" className="mb-1 text-sm font-semibold">
           {title}
         </Typography>
-        <Typography
-          type="small"
-          className="text-xs text-foreground dark:text-slate-800"
-        >
+        <Typography type="small" className="text-xs text-foreground/80 dark:text-slate-200">
           {description}
         </Typography>
       </div>
     </List.Item>
-  );
-});
-
-const renderItems = navListMenuItems.map(
-  ({ icon, title, description }, key) => (
-    <MenuItem key={key} title={title} description={description} icon={icon} />
   )
-);
+})
 
-export default renderItems;
+const renderItems = navListMenuItems.map(({ icon, title, description }, key) => (
+  <MenuItem key={key} title={title} description={description} icon={icon} />
+))
+
+export default renderItems
+

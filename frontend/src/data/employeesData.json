@@ -1,0 +1,138 @@
+[
+    {
+      "id": 1,
+      "name": "John Doe",
+      "department": "Engineering",
+      "position": "Senior Developer",
+      "status": "Inactive",
+      "email": "john.doe@example.com",
+      "phone": "123-456-7890",
+      "leaveRequests": [
+        {
+          "id": 1,
+          "startDate": "2025-04-01",
+          "endDate": "2025-04-03",
+          "status": "Rejected",
+          "createdAt": "2025-03-25T00:00:00Z"
+        }
+      ],
+      "expenses": [
+        {
+          "id": 1,
+          "amount": 500,
+          "description": "Travel Expense",
+          "status": "Approved",
+          "createdAt": "2025-03-28T00:00:00Z"
+        }
+      ],
+      "performanceReviews": [
+        {
+          "id": 1,
+          "date": "2025-01-15",
+          "rating": 4.5,
+          "comments": "Excellent work"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "department": "Marketing",
+      "position": "Marketing Manager",
+      "status": "Active",
+      "email": "jane.smith@example.com",
+      "phone": "234-567-8901",
+      "leaveRequests": [],
+      "expenses": [
+        {
+          "id": 2,
+          "amount": 300,
+          "description": "Event Sponsorship",
+          "status": "Approved",
+          "createdAt": "2025-03-29T00:00:00Z"
+        }
+      ],
+      "performanceReviews": []
+    },
+    {
+      "id": 3,
+      "name": "Mike Johnson",
+      "department": "HR",
+      "position": "HR Specialist",
+      "status": "Active",
+      "email": "mike.johnson@example.com",
+      "phone": "345-678-9012",
+      "leaveRequests": [],
+      "expenses": [],
+      "performanceReviews": []
+    },
+    {
+      "id": 4,
+      "name": "Chetan Mohite",
+      "department": "Marketing",
+      "position": "Engineer",
+      "status": "Active",
+      "email": "chetanraje860@gmail.com",
+      "phone": "123-123-4567",
+      "leaveRequests": [],
+      "expenses": [],
+      "performanceReviews": []
+    },
+    {
+      "id": 5,
+      "name": "Chetan Mohite",
+      "department": "Marketing",
+      "position": "Engineer",
+      "status": "Active",
+      "email": "chetanraje860@gmail.com",
+      "phone": "123-123-4567",
+      "leaveRequests": [],
+      "expenses": [
+        {
+          "id": 3,
+          "amount": 500,
+          "description": "Travel Expense",
+          "status": "Pending",
+          "createdAt": "2025-03-27T00:00:00Z"
+        }
+      ],
+      "performanceReviews": []
+    },
+    {
+      "id": 6,
+      "name": "Bhavesh Choudhari",
+      "department": "Engineering",
+      "position": "Jr. dev",
+      "status": "Active",
+      "email": "bhavesh@blc.com",
+      "phone": "132-123-4564",
+      "leaveRequests": [],
+      "expenses": [],
+      "performanceReviews": []
+    },
+    {
+      "id": 7,
+      "name": "Pushpak Bhoite",
+      "department": "Engineering",
+      "position": "Jr. dev",
+      "status": "Active",
+      "email": "pushpak@ngm.com",
+      "phone": "123-123-4567",
+      "leaveRequests": [],
+      "expenses": [],
+      "performanceReviews": []
+    },
+    {
+      "id": 8,
+      "name": "Yash Bharne",
+      "department": "Engineering",
+      "position": "Sr. Dev",
+      "status": "Active",
+      "email": "yash@ngm.com",
+      "phone": "123-123-1234",
+      "leaveRequests": [],
+      "expenses": [],
+      "performanceReviews": []
+    }
+  ]
+  
